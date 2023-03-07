@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "823813994183",
+    "project_id": "lesson-firebase-25dde",
+    "storage_bucket": "lesson-firebase-25dde.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:823813994183:android:be50bada750c25b4ee30e2",
+        "android_client_info": {
+          "package_name": "com.example.lesson_firebase"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "823813994183-b1iv3ncgm4eljhl5fd83s6h4clahnp1i.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBmoP7DEzH47j3v9nf9XvHSBh3_6OYe6dM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "823813994183-b1iv3ncgm4eljhl5fd83s6h4clahnp1i.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
