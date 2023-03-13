@@ -1,4 +1,4 @@
-package com.example.lesson_firebase
+package com.example.lesson_firebase.view
 
 import android.content.Context
 import android.content.Intent
@@ -15,11 +15,19 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import com.example.lesson_firebase.MainActivity
+import com.example.lesson_firebase.model.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.database.DatabaseReference
 
 @Composable
-fun HomeScreen(auth: FirebaseAuth, context: Context, cUser: FirebaseUser) {
+fun HomeScreen(
+    auth: FirebaseAuth,
+    context: Context,
+    cUser: FirebaseUser,
+    databaseReference: DatabaseReference
+) {
     val name = remember { mutableStateOf("") }
     val phoneNumber = remember { mutableStateOf("") }
 
@@ -52,6 +60,14 @@ fun HomeScreen(auth: FirebaseAuth, context: Context, cUser: FirebaseUser) {
             onValueChange = { phoneNumber.value = it },
             label = { Text(text = "Type a phone number of contact") }
         )
-        Button(onClick = { /*TODO*/ }) { Text(text = "Save") }
+        Button(onClick = {
+            databaseReference.push().setValue(
+                User(
+                    id = cUser.uid,
+                    name = name.value,
+                    phoneNumber = phoneNumber.value
+                )
+            )
+        }) { Text(text = "Save") }
     }
 }

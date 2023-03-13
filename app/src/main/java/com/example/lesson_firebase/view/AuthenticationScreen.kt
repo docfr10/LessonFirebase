@@ -1,4 +1,4 @@
-package com.example.lesson_firebase
+package com.example.lesson_firebase.view
 
 import android.content.Context
 import android.content.Intent
@@ -19,6 +19,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import com.example.lesson_firebase.MainActivity
 import com.google.firebase.auth.FirebaseAuth
 
 
