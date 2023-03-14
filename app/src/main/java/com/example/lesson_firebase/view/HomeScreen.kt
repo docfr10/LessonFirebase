@@ -1,10 +1,12 @@
 package com.example.lesson_firebase.view
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
@@ -15,18 +17,22 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import com.example.lesson_firebase.MainActivity
 import com.example.lesson_firebase.model.UserModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.DatabaseReference
+import com.google.firebase.storage.FirebaseStorage
 
 @Composable
 fun HomeScreen(
     auth: FirebaseAuth,
     context: Context,
     cUser: FirebaseUser,
-    databaseReference: DatabaseReference
+    databaseReference: DatabaseReference,
+    storage: FirebaseStorage,
+    activity: Activity,
 ) {
     val name = remember { mutableStateOf("") }
     val phoneNumber = remember { mutableStateOf("") }
@@ -61,9 +67,10 @@ fun HomeScreen(
             label = { Text(text = "Type a phone number of contact") }
         )
         Button(onClick = {
+            setImage(activity = activity)
             databaseReference.push().setValue(
                 UserModel(
-                    id = cUser.uid,
+                    id = (0..1000).shuffled().first(),
                     name = name.value,
                     phoneNumber = phoneNumber.value
                 )
@@ -71,3 +78,10 @@ fun HomeScreen(
         }) { Text(text = "Save") }
     }
 }
+
+private fun setImage(activity: Activity) {
+    val intent = Intent().setType("image/*").setAction(Intent.ACTION_GET_CONTENT)
+    activity.startActivityForResult(Intent.createChooser(intent, "Select image"), 100)
+}
+
+
