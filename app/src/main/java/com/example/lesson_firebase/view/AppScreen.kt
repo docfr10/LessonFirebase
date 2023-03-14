@@ -3,7 +3,6 @@ package com.example.lesson_firebase.view
 import android.app.Activity
 import android.content.Context
 import android.util.Log
-import android.widget.ImageView
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.*
@@ -128,7 +127,7 @@ private fun getUserData(
                 for (ds in dataSnapshot.children) {
                     val userMap = ds.value as HashMap<*, *>
                     val userModel = UserModel(
-                        userMap["id"] as Int,
+                        userMap["id"] as String,
                         userMap["name"] as String,
                         userMap["phoneNumber"] as String
                     )
