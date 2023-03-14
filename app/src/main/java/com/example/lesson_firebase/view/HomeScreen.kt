@@ -16,7 +16,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.example.lesson_firebase.MainActivity
-import com.example.lesson_firebase.model.User
+import com.example.lesson_firebase.model.UserModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.DatabaseReference
@@ -62,7 +62,7 @@ fun HomeScreen(
         )
         Button(onClick = {
             databaseReference.push().setValue(
-                User(
+                UserModel(
                     id = cUser.uid,
                     name = name.value,
                     phoneNumber = phoneNumber.value
