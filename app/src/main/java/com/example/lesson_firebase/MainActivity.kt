@@ -10,11 +10,14 @@ import com.example.lesson_firebase.model.UserModel
 import com.example.lesson_firebase.ui.theme.LessonFirebaseTheme
 import com.example.lesson_firebase.view.AppScreen
 import com.example.lesson_firebase.view.AuthenticationScreen
+import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.ktx.Firebase
 
 class MainActivity : ComponentActivity() {
     private var auth = FirebaseAuth.getInstance()
+    private val analytics = Firebase.analytics
     private val cUser = auth.currentUser
     private val databaseReference = FirebaseDatabase.getInstance().getReference("USERS/${auth.uid}")
     private val userData = mutableStateOf<List<UserModel>>(listOf())
