@@ -5,8 +5,9 @@ import android.content.Context
 import android.content.Intent
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
@@ -17,13 +18,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import com.example.lesson_firebase.MainActivity
 import com.example.lesson_firebase.model.UserModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.DatabaseReference
-import com.google.firebase.storage.FirebaseStorage
 
 @Composable
 fun HomeScreen(
@@ -31,9 +33,10 @@ fun HomeScreen(
     context: Context,
     cUser: FirebaseUser,
     databaseReference: DatabaseReference,
-    storage: FirebaseStorage,
     activity: Activity,
 ) {
+    val focusManager = LocalFocusManager.current
+
     val name = remember { mutableStateOf("") }
     val phoneNumber = remember { mutableStateOf("") }
 
@@ -59,18 +62,27 @@ fun HomeScreen(
         OutlinedTextField(
             value = name.value,
             onValueChange = { name.value = it },
-            label = { Text(text = "Type a name of contact") }
+            label = { Text(text = "Type a name of contact") },
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Email,
+                imeAction = ImeAction.Next
+            )
         )
         OutlinedTextField(
             value = phoneNumber.value,
             onValueChange = { phoneNumber.value = it },
-            label = { Text(text = "Type a phone number of contact") }
+            label = { Text(text = "Type a phone number of contact") },
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Phone,
+                imeAction = ImeAction.Done
+            ),
+            keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() })
         )
         Button(onClick = {
             setImage(activity = activity)
             databaseReference.push().setValue(
                 UserModel(
-                    id = (0..1000).shuffled().first(),
+                    id = databaseReference.push().key,
                     name = name.value,
                     phoneNumber = phoneNumber.value
                 )
@@ -80,7 +92,7 @@ fun HomeScreen(
 }
 
 private fun setImage(activity: Activity) {
-    val intent = Intent().setType("image/*").setAction(Intent.ACTION_GET_CONTENT)
+    val intent = Intent().setType("image/*").setAction(Intent.ACTION_PICK)
     activity.startActivityForResult(Intent.createChooser(intent, "Select image"), 100)
 }
 

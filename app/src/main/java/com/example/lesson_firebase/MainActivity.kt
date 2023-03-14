@@ -24,7 +24,8 @@ class MainActivity : ComponentActivity() {
     private val cUser = auth.currentUser
     private val storage = Firebase.storage
     private val databaseReference = FirebaseDatabase.getInstance().getReference("USERS/${auth.uid}")
-    private var imagesReference: StorageReference? = storage.reference.child("images/${auth.uid}")
+    private var imagesReference: StorageReference? =
+        storage.reference.child("images/${auth.uid}/${databaseReference.push().key}")
 
     private val userData = mutableStateOf<List<UserModel>>(listOf())
 
@@ -45,8 +46,8 @@ class MainActivity : ComponentActivity() {
                         context = context,
                         cUser = cUser,
                         databaseReference = databaseReference,
+                        imagesReference = imagesReference,
                         navController = navController,
-                        storage = storage,
                         userData = userData
                     )
             }
@@ -63,7 +64,7 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun uploadImage(imageUri: Uri) {
-        val imageRef = imagesReference!!.child(imageUri.lastPathSegment!!)
+        val imageRef = imagesReference!!
         val uploadTask = imageRef.putFile(imageUri)
 
         uploadTask.addOnSuccessListener {

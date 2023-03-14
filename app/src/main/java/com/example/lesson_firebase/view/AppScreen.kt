@@ -3,7 +3,6 @@ package com.example.lesson_firebase.view
 import android.app.Activity
 import android.content.Context
 import android.util.Log
-import android.widget.ImageView
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.*
@@ -24,6 +23,7 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -34,8 +34,8 @@ fun AppScreen(
     databaseReference: DatabaseReference,
     navController: NavHostController,
     userData: MutableState<List<UserModel>>,
-    storage: FirebaseStorage,
     activity: Activity,
+    imagesReference: StorageReference?,
 ) {
     Scaffold(
         bottomBar = { BottomNavigationBar(navController = navController) },
@@ -46,9 +46,9 @@ fun AppScreen(
                 context = context,
                 cUser = cUser,
                 databaseReference = databaseReference,
+                imagesReference = imagesReference,
                 navController = navController,
                 padding = padding,
-                storage = storage,
                 userData = userData
             )
         })
@@ -89,8 +89,8 @@ private fun NavHostContainer(
     navController: NavHostController,
     padding: PaddingValues,
     userData: MutableState<List<UserModel>>,
-    storage: FirebaseStorage,
     activity: Activity,
+    imagesReference: StorageReference?,
 ) {
     NavHost(
         navController = navController,
@@ -103,16 +103,19 @@ private fun NavHostContainer(
                     auth = auth,
                     context = context,
                     cUser = cUser,
-                    databaseReference = databaseReference,
-                    storage = storage
+                    databaseReference = databaseReference
                 )
             }
             composable(route = "contacts") {
                 getUserData(
                     databaseReference = databaseReference,
+
                     userData = userData
                 )
-                ContactsScreen(userData = userData)
+                ContactsScreen(
+                    imagesReference = imagesReference,
+                    userData = userData
+                )
             }
         })
 }
@@ -128,7 +131,7 @@ private fun getUserData(
                 for (ds in dataSnapshot.children) {
                     val userMap = ds.value as HashMap<*, *>
                     val userModel = UserModel(
-                        userMap["id"] as Int,
+                        userMap["id"] as String,
                         userMap["name"] as String,
                         userMap["phoneNumber"] as String
                     )
