@@ -22,7 +22,6 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ValueEventListener
-import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -113,6 +112,7 @@ private fun NavHostContainer(
                     userData = userData
                 )
                 ContactsScreen(
+                    context = context,
                     imagesReference = imagesReference,
                     userData = userData
                 )
