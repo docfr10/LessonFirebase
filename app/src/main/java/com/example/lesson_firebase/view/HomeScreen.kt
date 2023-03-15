@@ -26,6 +26,7 @@ import com.example.lesson_firebase.model.UserModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.DatabaseReference
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 
 @Composable
 fun HomeScreen(
@@ -34,11 +35,14 @@ fun HomeScreen(
     cUser: FirebaseUser,
     databaseReference: DatabaseReference,
     activity: Activity,
+    firebaseRemoteConfig: FirebaseRemoteConfig,
 ) {
     val focusManager = LocalFocusManager.current
 
     val name = remember { mutableStateOf("") }
     val phoneNumber = remember { mutableStateOf("") }
+
+    val logged = firebaseRemoteConfig.getString("You_are_logged_as")
 
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -50,7 +54,8 @@ fun HomeScreen(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceAround
         ) {
-            Text(text = "You are logged in as: ${cUser.email}")
+            Text(text = "Youare logged in as: ${cUser.email}")
+            //Text(text = "$logged ${cUser.email}")
             Icon(
                 imageVector = Icons.Default.ExitToApp,
                 contentDescription = "Log out",

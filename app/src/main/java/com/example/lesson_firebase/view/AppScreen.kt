@@ -22,6 +22,7 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ValueEventListener
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.storage.StorageReference
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -35,6 +36,7 @@ fun AppScreen(
     userData: MutableState<List<UserModel>>,
     activity: Activity,
     imagesReference: StorageReference?,
+    firebaseRemoteConfig: FirebaseRemoteConfig,
 ) {
     Scaffold(
         bottomBar = { BottomNavigationBar(navController = navController) },
@@ -46,6 +48,7 @@ fun AppScreen(
                 cUser = cUser,
                 databaseReference = databaseReference,
                 imagesReference = imagesReference,
+                firebaseRemoteConfig = firebaseRemoteConfig,
                 navController = navController,
                 padding = padding,
                 userData = userData
@@ -90,6 +93,7 @@ private fun NavHostContainer(
     userData: MutableState<List<UserModel>>,
     activity: Activity,
     imagesReference: StorageReference?,
+    firebaseRemoteConfig: FirebaseRemoteConfig,
 ) {
     NavHost(
         navController = navController,
@@ -102,7 +106,8 @@ private fun NavHostContainer(
                     auth = auth,
                     context = context,
                     cUser = cUser,
-                    databaseReference = databaseReference
+                    databaseReference = databaseReference,
+                    firebaseRemoteConfig = firebaseRemoteConfig
                 )
             }
             composable(route = "contacts") {

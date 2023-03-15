@@ -16,11 +16,14 @@ import com.example.lesson_firebase.view.AuthenticationScreen
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig
+import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
 import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.ktx.storage
 
 class MainActivity : ComponentActivity() {
     private var auth = FirebaseAuth.getInstance()
+    private val firebaseRemoteConfig = FirebaseRemoteConfig.getInstance()
     private val cUser = auth.currentUser
     private val storage = Firebase.storage
     private val databaseReference = FirebaseDatabase.getInstance().getReference("USERS/${auth.uid}")
@@ -37,6 +40,14 @@ class MainActivity : ComponentActivity() {
                 val activity = LocalContext.current as Activity
                 val navController = rememberNavController()
 
+                val configSettings = FirebaseRemoteConfigSettings.Builder()
+                    .setMinimumFetchIntervalInSeconds(3600)
+                    .setFetchTimeoutInSeconds(60)
+                    .build()
+                firebaseRemoteConfig.setConfigSettingsAsync(configSettings)
+                firebaseRemoteConfig.activate()
+                firebaseRemoteConfig.fetch()
+
                 if (cUser == null)
                     AuthenticationScreen(auth = auth, context = context)
                 else
@@ -47,6 +58,7 @@ class MainActivity : ComponentActivity() {
                         cUser = cUser,
                         databaseReference = databaseReference,
                         imagesReference = imagesReference,
+                        firebaseRemoteConfig = firebaseRemoteConfig,
                         navController = navController,
                         userData = userData
                     )
