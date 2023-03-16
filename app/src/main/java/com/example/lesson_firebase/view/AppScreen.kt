@@ -2,7 +2,9 @@ package com.example.lesson_firebase.view
 
 import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.util.Log
+import androidx.activity.result.ActivityResultLauncher
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.*
@@ -37,6 +39,7 @@ fun AppScreen(
     activity: Activity,
     imagesReference: StorageReference?,
     firebaseRemoteConfig: FirebaseRemoteConfig,
+    startForResultImage: ActivityResultLauncher<Intent>,
 ) {
     Scaffold(
         bottomBar = { BottomNavigationBar(navController = navController) },
@@ -50,6 +53,7 @@ fun AppScreen(
                 imagesReference = imagesReference,
                 firebaseRemoteConfig = firebaseRemoteConfig,
                 navController = navController,
+                startForResultImage = startForResultImage,
                 padding = padding,
                 userData = userData
             )
@@ -94,6 +98,7 @@ private fun NavHostContainer(
     activity: Activity,
     imagesReference: StorageReference?,
     firebaseRemoteConfig: FirebaseRemoteConfig,
+    startForResultImage: ActivityResultLauncher<Intent>,
 ) {
     NavHost(
         navController = navController,
@@ -107,7 +112,8 @@ private fun NavHostContainer(
                     context = context,
                     cUser = cUser,
                     databaseReference = databaseReference,
-                    firebaseRemoteConfig = firebaseRemoteConfig
+                    firebaseRemoteConfig = firebaseRemoteConfig,
+                    startForResultImage = startForResultImage,
                 )
             }
             composable(route = "contacts") {
