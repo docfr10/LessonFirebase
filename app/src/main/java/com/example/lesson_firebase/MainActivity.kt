@@ -6,6 +6,7 @@ import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.rememberNavController
@@ -36,12 +37,35 @@ class MainActivity : ComponentActivity() {
 
     private val userData = mutableStateOf<List<UserModel>>(listOf())
 
+    private val startForResultSignIn =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            if (it.resultCode == Activity.RESULT_OK) {
+                val task = GoogleSignIn.getSignedInAccountFromIntent(it.data)
+                try {
+                    val account = task.getResult(ApiException::class.java)!!
+                    val idToken = account.idToken
+                    // Authenticate with Firebase Authentication using the ID token
+                    firebaseAuthWithGoogle(idToken!!)
+                } catch (e: ApiException) {
+                    // Handle sign-in failure
+                }
+            }
+        }
+
+    private val startForResultImage =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            if (it.resultCode == Activity.RESULT_OK) {
+                val imageUri = it.data!!.data
+                uploadImage(imageUri!!)
+            }
+        }
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             LessonFirebaseTheme {
                 val context = LocalContext.current
-                val activity = LocalContext.current as Activity
                 val navController = rememberNavController()
 
                 val configSettings = FirebaseRemoteConfigSettings.Builder()
@@ -62,13 +86,12 @@ class MainActivity : ComponentActivity() {
                 if (cUser == null)
                     AuthenticationScreen(
                         auth = auth,
-                        activity = activity,
                         context = context,
-                        googleSignInClient = googleSignInClient
+                        googleSignInClient = googleSignInClient,
+                        startForResultSignIn = startForResultSignIn
                     )
                 else
                     AppScreen(
-                        activity = activity,
                         auth = auth,
                         context = context,
                         cUser = cUser!!,
@@ -76,29 +99,9 @@ class MainActivity : ComponentActivity() {
                         imagesReference = imagesReference,
                         firebaseRemoteConfig = firebaseRemoteConfig,
                         navController = navController,
+                        startForResultImage = startForResultImage,
                         userData = userData
                     )
-            }
-        }
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
-        if (requestCode == 100 && resultCode == RESULT_OK && data != null) {
-            val imageUri = data.data
-            uploadImage(imageUri!!)
-        }
-
-        if (requestCode == 1) {
-            val task = GoogleSignIn.getSignedInAccountFromIntent(data)
-            try {
-                val account = task.getResult(ApiException::class.java)!!
-                val idToken = account.idToken
-                // Authenticate with Firebase Authentication using the ID token
-                firebaseAuthWithGoogle(idToken!!)
-            } catch (e: ApiException) {
-                // Handle sign-in failure
             }
         }
     }

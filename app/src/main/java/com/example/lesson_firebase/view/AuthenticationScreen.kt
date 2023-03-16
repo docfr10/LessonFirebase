@@ -1,9 +1,9 @@
 package com.example.lesson_firebase.view
 
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
@@ -20,7 +20,6 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
-import androidx.core.app.ActivityCompat.startActivityForResult
 import com.example.lesson_firebase.MainActivity
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.firebase.auth.FirebaseAuth
@@ -31,7 +30,7 @@ fun AuthenticationScreen(
     context: Context,
     auth: FirebaseAuth,
     googleSignInClient: GoogleSignInClient,
-    activity: Activity
+    startForResultSignIn: ActivityResultLauncher<Intent>
 ) {
     val email = remember { mutableStateOf("") }
     val password = remember { mutableStateOf("") }
@@ -137,14 +136,20 @@ fun AuthenticationScreen(
         }) { Text(text = "Sign in") }
         // SignIn button
         Button(onClick = {
-            signInWithGoogle(activity = activity, googleSignInClient = googleSignInClient)
+            signInWithGoogle(
+                googleSignInClient = googleSignInClient,
+                startForResultSignIn = startForResultSignIn
+            )
         }) {
             Text(text = "Sign in with Google")
         }
     }
 }
 
-private fun signInWithGoogle(googleSignInClient: GoogleSignInClient, activity: Activity) {
+private fun signInWithGoogle(
+    googleSignInClient: GoogleSignInClient,
+    startForResultSignIn: ActivityResultLauncher<Intent>,
+) {
     val signInIntent = googleSignInClient.signInIntent
-    startActivityForResult(activity, signInIntent, 1, null)
+    startForResultSignIn.launch(signInIntent)
 }

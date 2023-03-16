@@ -1,8 +1,8 @@
 package com.example.lesson_firebase.view
 
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import androidx.activity.result.ActivityResultLauncher
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardActions
@@ -34,8 +34,8 @@ fun HomeScreen(
     context: Context,
     cUser: FirebaseUser,
     databaseReference: DatabaseReference,
-    activity: Activity,
     firebaseRemoteConfig: FirebaseRemoteConfig,
+    startForResultImage: ActivityResultLauncher<Intent>,
 ) {
     val focusManager = LocalFocusManager.current
 
@@ -84,7 +84,7 @@ fun HomeScreen(
             keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() })
         )
         Button(onClick = {
-            setImage(activity = activity)
+            setImage(startForResultImage = startForResultImage)
             databaseReference.push().setValue(
                 UserModel(
                     id = databaseReference.push().key,
@@ -96,9 +96,9 @@ fun HomeScreen(
     }
 }
 
-private fun setImage(activity: Activity) {
+private fun setImage(startForResultImage: ActivityResultLauncher<Intent>) {
     val intent = Intent().setType("image/*").setAction(Intent.ACTION_PICK)
-    activity.startActivityForResult(Intent.createChooser(intent, "Select image"), 100)
+    startForResultImage.launch(intent)
 }
 
 
