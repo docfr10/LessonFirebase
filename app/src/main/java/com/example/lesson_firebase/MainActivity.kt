@@ -13,7 +13,11 @@ import com.example.lesson_firebase.model.UserModel
 import com.example.lesson_firebase.ui.theme.LessonFirebaseTheme
 import com.example.lesson_firebase.view.AppScreen
 import com.example.lesson_firebase.view.AuthenticationScreen
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
@@ -24,7 +28,7 @@ import com.google.firebase.storage.ktx.storage
 class MainActivity : ComponentActivity() {
     private var auth = FirebaseAuth.getInstance()
     private val firebaseRemoteConfig = FirebaseRemoteConfig.getInstance()
-    private val cUser = auth.currentUser
+    private var cUser = auth.currentUser
     private val storage = Firebase.storage
     private val databaseReference = FirebaseDatabase.getInstance().getReference("USERS/${auth.uid}")
     private var imagesReference: StorageReference? =
@@ -48,14 +52,26 @@ class MainActivity : ComponentActivity() {
                 firebaseRemoteConfig.activate()
                 firebaseRemoteConfig.fetch()
 
+                val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                    .requestIdToken(getString(R.string.default_web_client_id))
+                    .requestEmail()
+                    .build()
+
+                val googleSignInClient = GoogleSignIn.getClient(this, gso)
+
                 if (cUser == null)
-                    AuthenticationScreen(auth = auth, context = context)
+                    AuthenticationScreen(
+                        auth = auth,
+                        activity = activity,
+                        context = context,
+                        googleSignInClient = googleSignInClient
+                    )
                 else
                     AppScreen(
                         activity = activity,
                         auth = auth,
                         context = context,
-                        cUser = cUser,
+                        cUser = cUser!!,
                         databaseReference = databaseReference,
                         imagesReference = imagesReference,
                         firebaseRemoteConfig = firebaseRemoteConfig,
@@ -73,6 +89,31 @@ class MainActivity : ComponentActivity() {
             val imageUri = data.data
             uploadImage(imageUri!!)
         }
+
+        if (requestCode == 1) {
+            val task = GoogleSignIn.getSignedInAccountFromIntent(data)
+            try {
+                val account = task.getResult(ApiException::class.java)!!
+                val idToken = account.idToken
+                // Authenticate with Firebase Authentication using the ID token
+                firebaseAuthWithGoogle(idToken!!)
+            } catch (e: ApiException) {
+                // Handle sign-in failure
+            }
+        }
+    }
+
+    private fun firebaseAuthWithGoogle(idToken: String) {
+        val credential = GoogleAuthProvider.getCredential(idToken, null)
+        auth.signInWithCredential(credential)
+            .addOnCompleteListener(this) { task ->
+                if (task.isSuccessful) {
+                    cUser = auth.currentUser
+                    startActivity(Intent(applicationContext, MainActivity::class.java))
+                } else {
+                    // Authentication failed
+                }
+            }
     }
 
     private fun uploadImage(imageUri: Uri) {

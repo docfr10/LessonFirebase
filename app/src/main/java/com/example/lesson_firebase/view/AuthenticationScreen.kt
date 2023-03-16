@@ -1,5 +1,6 @@
 package com.example.lesson_firebase.view
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.widget.Toast
@@ -19,12 +20,19 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.core.app.ActivityCompat.startActivityForResult
 import com.example.lesson_firebase.MainActivity
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.firebase.auth.FirebaseAuth
 
 
 @Composable
-fun AuthenticationScreen(context: Context, auth: FirebaseAuth) {
+fun AuthenticationScreen(
+    context: Context,
+    auth: FirebaseAuth,
+    googleSignInClient: GoogleSignInClient,
+    activity: Activity
+) {
     val email = remember { mutableStateOf("") }
     val password = remember { mutableStateOf("") }
 
@@ -127,5 +135,16 @@ fun AuthenticationScreen(context: Context, auth: FirebaseAuth) {
                 ).show()
             }
         }) { Text(text = "Sign in") }
+        // SignIn button
+        Button(onClick = {
+            signInWithGoogle(activity = activity, googleSignInClient = googleSignInClient)
+        }) {
+            Text(text = "Sign in with Google")
+        }
     }
+}
+
+private fun signInWithGoogle(googleSignInClient: GoogleSignInClient, activity: Activity) {
+    val signInIntent = googleSignInClient.signInIntent
+    startActivityForResult(activity, signInIntent, 1, null)
 }

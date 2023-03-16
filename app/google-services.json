@@ -15,7 +15,15 @@
       },
       "oauth_client": [
         {
-          "client_id": "823813994183-b1iv3ncgm4eljhl5fd83s6h4clahnp1i.apps.googleusercontent.com",
+          "client_id": "823813994183-hhip8rls0qse6oarerl8rbkukoeucbhg.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.lesson_firebase",
+            "certificate_hash": "d6e6d9c7ad8a1379a54f04bd5fb3ec4ed633ec1d"
+          }
+        },
+        {
+          "client_id": "823813994183-paqnotddmjecggp5551qnqf471sa6jte.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
