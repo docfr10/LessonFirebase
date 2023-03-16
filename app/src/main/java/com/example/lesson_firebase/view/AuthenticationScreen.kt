@@ -38,7 +38,6 @@ fun AuthenticationScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(10.dp)
             .background(MaterialTheme.colorScheme.background)
             .imePadding(),
         // parameters set to place the items in center
